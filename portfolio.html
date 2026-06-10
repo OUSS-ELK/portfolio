@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;1,600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0c09;
+    --parchment: #f5ede0;
+    --amber: #c8832a;
+    --rust: #9b3a1a;
+    --steel: #4a6274;
+    --code-green: #3d7a3d;
+    --dust: #b8a898;
+    --midnight: #0d1117;
+    --glow: rgba(200,131,42,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--midnight);
+    color: var(--parchment);
+    font-family: 'EB Garamond', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  #entry {
+    position: fixed; inset: 0; z-index: 100;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    transition: opacity 1.5s ease, visibility 1.5s;
+  }
+  #entry.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+  #entry p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--amber);
+    letter-spacing: 0.3em;
+    opacity: 0;
+    animation: fadeUp 1.2s 0.8s forwards;
+  }
+  #entry h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-style: italic;
+    color: var(--parchment);
+    opacity: 0;
+    animation: fadeUp 1.4s 1.4s forwards;
+    text-align: center;
+    padding: 0 1rem;
+  }
+  #enter-btn {
+    margin-top: 3rem;
+    background: none;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    padding: 0.8rem 2.4rem;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeUp 1s 2.4s forwards;
+    transition: background 0.3s, color 0.3s;
+  }
+  #enter-btn:hover { background: var(--amber); color: #000; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #room { min-height: 100vh; position: relative; overflow: hidden; }
+
+  .room-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 60% at 62% 78%, rgba(200,131,42,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(155,58,26,0.08) 0%, transparent 60%),
+      linear-gradient(175deg, #060810 0%, #0d1117 40%, #111820 100%);
+  }
+
+  .room-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.012) 80px),
+      repeating-linear-gradient(0deg,  transparent, transparent 79px, rgba(255,255,255,0.012) 80px);
+    pointer-events: none;
+  }
+
+  .scene {
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto; padding: 6vh 5vw 20vh;
+  }
+
+  .room-title { text-align: center; padding: 12vh 0 8vh; opacity: 0; animation: fadeUp 1.2s 0.3s forwards; }
+  .room-title .label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.4em; color: var(--amber); text-transform: uppercase; }
+  .room-title h2 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2rem, 5vw, 3.8rem); color: var(--parchment); margin-top: 0.5rem; line-height: 1.1; }
+
+  .section { margin-bottom: 8vh; opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .desk {
+    position: relative; background: linear-gradient(170deg, #1a1208 0%, #120d07 100%);
+    border: 1px solid rgba(200,131,42,0.18); border-radius: 2px; padding: 3rem 3rem 2.5rem;
+    box-shadow: 0 0 60px rgba(200,131,42,0.07), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .desk::before {
+    content: 'COMMUNICATION TERMINAL'; position: absolute; top: -0.9rem; left: 2rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 0.4em;
+    color: var(--amber); background: #120d07; padding: 0 0.6rem;
+  }
+
+  .monitor {
+    background: #060810; border: 2px solid #1e2a35; border-radius: 4px 4px 0 0; padding: 1.5rem 2rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; line-height: 1.9;
+    position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(61,122,61,0.1), inset 0 0 30px rgba(0,0,0,0.5);
+  }
+  .monitor a { color: #61afef; text-decoration: none; }
+  .monitor a:hover { text-decoration: underline; }
+  .c-comment { color: #4a6274; }
+  .c-keyword  { color: #7bafd4; }
+  .c-string   { color: #98c379; }
+
+  .objects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .object-card {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(200,131,42,0.1);
+    border-radius: 2px; padding: 1.8rem 1.6rem; position: relative;
+    transition: border-color 0.3s, background 0.3s, transform 0.3s; cursor: default;
+  }
+  .object-card:hover { border-color: rgba(200,131,42,0.4); background: rgba(200,131,42,0.05); transform: translateY(-3px); }
+  .object-card .obj-name { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .object-card .obj-desc { font-size: 0.95rem; line-height: 1.65; color: var(--dust); }
+
+  .notice-board { background: #2a1f0f; border: 2px solid #4a3520; padding: 2.5rem; position: relative; }
+  .notice-board::before { content: 'EDUCATION & CERTIFICATIONS'; position: absolute; top: -0.9rem; left: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 0.4em; color: #c8832a; background: #2a1f0f; padding: 0 0.6rem; }
+  .sticky-notes { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; }
+  .sticky {
+    padding: 1.2rem 1rem; font-size: 0.78rem; line-height: 1.6; transform: rotate(var(--rot, -1deg));
+    box-shadow: 3px 4px 12px rgba(0,0,0,0.4); min-width: 150px; max-width: 200px; cursor: default;
+    transition: transform 0.2s; font-family: 'JetBrains Mono', monospace;
+  }
+  .sticky:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
+  .s-yellow { background: #f9e55a; color: #1a1208; --rot: -2deg; }
+  .s-orange { background: #f7a84a; color: #1a1208; --rot: 1.5deg; }
+  .s-blue   { background: #a8c8f7; color: #0a1a3a; --rot: -0.5deg; }
+
+  .whiteboard { background: #f5ede0; color: #1a1208; border: 3px solid #c8b89a; padding: 2rem; border-radius: 2px; position: relative; box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
+  .whiteboard::before { content: 'SKILLS & TECHNOLOGIES'; position: absolute; top: -1rem; left: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 0.4em; color: #c8b89a; background: #1a1208; padding: 0 0.6rem; }
+  .whiteboard-content { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; line-height: 2; color: #2a1a0a; }
+  .wb-red { color: #9b1a1a; font-weight: bold; }
+
+  .section-heading { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.6rem; color: var(--parchment); margin-bottom: 0.3rem; }
+  .section-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--amber); margin-bottom: 1.8rem; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #060810; }
+  ::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="entry">
+  <p>SYSTEM INITIALIZED</p>
+  <h1>Portfolio Array</h1>
+  <button id="enter-btn" onclick="enterRoom()">ACCESS RECORD</button>
+</div>
+
+<div id="room">
+  <div class="room-bg"></div>
+  <div class="scene">
+
+    <div class="room-title">
+      <div class="label">Professional Record</div>
+      <h2>Software Engineer Student</h2>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section" id="s1">
+      <div class="desk">
+        <div class="monitor">
+          <div><span class="c-comment">// Contact & Links</span></div>
+          <div><span class="c-keyword">const</span> email = <span class="c-string">"<a href="mailto:elkharrafoussama@gmail.com">elkharrafoussama@gmail.com</a>"</span>;</div>
+          <div><span class="c-keyword">const</span> github = <span class="c-string">"<a href="https://github.com/OUSS-ELK/OUSS-ELK" target="_blank">github.com/OUSS-ELK</a>"</span>;</div>
+          <div><span class="c-keyword">const</span> linkedin = <span class="c-string">"<a href="https://www.linkedin.com/in/oussama-elkharraf" target="_blank">linkedin.com/in/oussama-elkharraf</a>"</span>;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section" id="s2">
+      <div class="whiteboard">
+        <div class="whiteboard-content">
+          <div><span class="wb-red">[ Software Engineering ]</span></div>
+          <div>> C++, C</div>
+          <div>> Rust</div>
+          <div>> Python</div>
+          <div>> SvelteKit</div>
+          <div>> SQL</div>
+          <div style="margin-top:1rem;"><span class="wb-red">[ Hardware & IoT ]</span></div>
+          <div>> Raspberry Pi</div>
+          <div>> ESP32</div>
+          <div>> Arduino Kits (Sensors & Actuators)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="section" id="s3">
+      <div class="section-heading">Project Archive</div>
+      <div class="section-sub">// executed builds and prototypes</div>
+      <div class="objects-grid">
+        <div class="object-card">
+          <div class="obj-name">Naja7HUB</div>
+          <div class="obj-desc">Educational technology platform development.</div>
+        </div>
+        <div class="object-card">
+          <div class="obj-name">IoT Smart Cane</div>
+          <div class="obj-desc">Hardware prototyping integrating sensors and actuators for mobility assistance.</div>
+        </div>
+        <div class="object-card">
+          <div class="obj-name">IoT GPS Tracker</div>
+          <div class="obj-desc">Embedded systems project using microcontrollers for real-time location tracking.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="section" id="s4">
+      <div class="notice-board">
+        <div class="sticky-notes">
+          <div class="sticky s-yellow">
+            <strong>1337 MED</strong><br>
+            42 Network<br>
+            Software Engineering
+          </div>
+          <div class="sticky s-blue">
+            <strong>FST</strong><br>
+            License in Mechatronics<br>
+            Engineering & Systems
+          </div>
+          <div class="sticky s-orange">
+            <strong>Baccalaureate</strong><br>
+            Science Physique
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function enterRoom() {
+    document.getElementById('entry').classList.add('gone');
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
